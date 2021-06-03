@@ -3,8 +3,6 @@ Documentation   Сьют позитивных тестов, проверяющи
 Metadata        Автор       Чеснова Анастасия
 Force Tags      positive
 Resource        resource.robot
-Resource        postgrest_keywords.robot
-Resource        postgresql_db_keywords.robot
 Test Timeout    10s
 Test Setup      Test Setup
 Test Teardown   Test Teardown
@@ -12,7 +10,7 @@ Test Teardown   Test Teardown
 *** Keywords ***
 Test Setup
     Create postgrest session
-    Connect to postgres db    hadb
+    Connect to local postgresql db    hadb
 
 Test Teardown
     Delete and check data from previous request (DELETE)

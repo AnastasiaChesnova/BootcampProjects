@@ -1,30 +1,27 @@
 *** Settings ***
 Documentation   Набор кейвордов для тестов с взаимодействием с postgresql
-Library    CustomersOrdersResult  WITH NAME   cor
+Resource     resource.robot
 *** Variables ***
 ${postgrest_URL}        http://localhost:3000
 ${db_login}         authenticator
 ${db_password}      mysecretpassword
 ${db_host}          localhost
 ${db_port}          8432
+${connection_id}      db1
 *** Keywords ***
-Connect to postgres db
+Connect to local postgresql db
     [arguments]  ${database}
-    DB.Connect To Postgresql      ${database}    ${db_login}   ${db_password}    ${db_host}  ${db_port}
+   DB.Connect To Postgresql      ${database}    ${db_login}   ${db_password}    ${db_host}  ${db_port}     ${connection_id}
 Disconnect From Postgresql
     DB.Disconnect From Postgresql
 
 Get data from category table with SQL
-      ${params}    create dictionary    category=21     categoryname=TestCategory
-      ${SQL}       set variable         select category, categoryname from bootcamp.categories where category=%(category)s
-      ${result list}    DB.Execute Sql String Mapped   ${SQL}   &{params}
+      ${result list}      sql.get_category_and_catygoryname_from_categories       category=${21}          categoryname=TestCategory
       should not be empty  ${result list}
       [return]      ${result list}
 
 Get data from customers and orders tables with sql
-    ${params}    create dictionary           totalamount=430
-    ${SQL}   set variable       SELECT firstname, lastname, totalamount from bootcamp.customers c join bootcamp.orders o on c.customerid=o.customerid where totalamount > %(totalamount)s
-    ${result}    DB.Execute Sql String Mapped    ${SQL}     &{params}
+     ${result}  sql.get_firstname_lastname_totalamount_from_customers_and_orders_with_totalamounts_greater_than_430    totalamount=${430}
     ${firstname list db}    ${lastname list db}  ${totalamount list db}      cor.get result to firstname lastname and total amount list      ${result}
 
     [return]   ${firstname list db}         ${lastname list db}        ${totalamount list db}
